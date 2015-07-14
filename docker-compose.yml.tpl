@@ -4,6 +4,7 @@ panteras:
   name:       panteras
   net:        host
   privileged: true
+  cpu_shares: 100
 
   environment:
     CONSUL_IP:               "${CONSUL_IP}"
