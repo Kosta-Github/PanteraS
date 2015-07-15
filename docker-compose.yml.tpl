@@ -4,6 +4,7 @@ panteras:
   name:       panteras
   net:        host
   privileged: true
+  restart:    ${PANTERAS_RESTART}
 
   environment:
     CONSUL_IP:               "${CONSUL_IP}"

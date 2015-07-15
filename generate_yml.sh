@@ -154,4 +154,6 @@ ZOOKEEPER_APP_PARAMS=${ZOOKEEPER_APP_PARAMS:-$ZOOKEEPER_PARAMS}
 
 PANTERAS_HOSTNAME=${PANTERAS_HOSTNAME:-${HOSTNAME}}
 
+PANTERAS_RESTART=${PANTERAS_RESTART:-"no"}
+
 eval "$(cat docker-compose.yml.tpl| sed 's/"/+++/g'|sed  's/^\(.*\)$/echo "\1"/')" |sed 's/+++/"/g'|sed 's;\\";";g' > docker-compose.yml
