@@ -43,4 +43,5 @@ panteras:
     - "/var/spool/marathon/artifacts/store:/var/spool/store"
     - "/var/run/docker.sock:/tmp/docker.sock"
     - "/var/lib/docker:/var/lib/docker"
+    - "/sys:/sys"
     - "/tmp/mesos:/tmp/mesos"
