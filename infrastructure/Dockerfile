@@ -99,6 +99,10 @@ ADD template.conf      /opt/consul-template/
 ADD haproxy_watcher.sh /opt/consul-template/
 ADD haproxy_reload.sh  /opt/consul-template/
 
+# use a customized rsyslog haproxy configuration
+RUN rm /etc/rsyslog.d/haproxy.conf
+ADD haproxy_rsyslog.conf /etc/rsyslog.d/49-haproxy.conf
+
 # KEEPALIVED config
 #
 ADD keepalived.conf      /opt/consul-template/
