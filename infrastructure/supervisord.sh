@@ -1,4 +1,7 @@
 #!/bin/bash
+
+service rsyslog restart
+
 [ -z ${HOST_IP} ] || exec supervisord
 export LC_ALL=en_US.utf8
 toilet -f Elite PanteraS | /usr/games/lolcat -f 2>/dev/null
