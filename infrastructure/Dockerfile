@@ -100,10 +100,10 @@ ADD haproxy_watcher.sh /opt/consul-template/
 ADD haproxy_reload.sh  /opt/consul-template/
 
 # use a customized rsyslog haproxy configuration
-RUN touch /var/log/haproxy.log
 RUN rm /etc/rsyslog.d/haproxy.conf
-ADD haproxy-rsyslog.conf /etc/rsyslog.d/49-haproxy.conf
+ADD haproxy-rsyslog.conf /etc/rsyslog.d/20-haproxy.conf
 ADD rsyslog-default.conf /etc/rsyslog.d/50-default.conf
+RUN service rsyslog restart
 
 # KEEPALIVED config
 #
