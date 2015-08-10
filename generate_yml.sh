@@ -55,6 +55,7 @@ START_MESOS_SLAVE=${START_MESOS_SLAVE:-${SLAVE}}
 START_REGISTRATOR=${START_REGISTRATOR:-${SLAVE}}
 #OPTIONAL
 START_DNSMASQ=${START_DNSMASQ:-"true"}
+START_RSYSLOG=${START_RSYSLOG:-"true"}
 
 # Lets consul behave as a client but on slaves only
 [ "${SLAVE}" == "true" ] && [ "${MASTER}" == "false" ] && CONSUL_MODE=${CONSUL_MODE:-' '}
