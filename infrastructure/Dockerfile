@@ -17,7 +17,6 @@ ENV GOPATH ${HOME}/go
 
 RUN apt-get update \
     && apt-get install -y \
-      libnl-utils \
       apt-transport-https \
       python-pip \
       wget \
@@ -34,13 +33,13 @@ RUN apt-get update \
 RUN pip install supervisor-stdout
 RUN pip install https://github.com/Supervisor/supervisor/archive/3.2-branch.zip
 
-ENV DOCKER_APP_VERSION 1.7.0
+ENV DOCKER_APP_VERSION 1.7.1-0~trusty
 ENV CONSUL_APP_VERSION 0.5.2
 ENV CONSUL_TEMPLATE_APP_VERSION 0.10.0
 ENV ENVCONSUL_APP_VERSION 0.5.0
 ENV HAPROXY_APP_VERSION 1.5.3-1~ubuntu14.04.1
 ENV MESOS_APP_VERSION 0.22.1-1.0.ubuntu1404
-ENV MARATHON_APP_VERSION 0.8.2-1.0.306.ubuntu1404
+ENV MARATHON_APP_VERSION 0.9.1-1.0.393.ubuntu1404
 ENV REGISTRATOR_APP_VERSION v5
 
 ENV DOCKER_HOST unix:///tmp/docker.sock
@@ -80,6 +79,8 @@ RUN sed -i 's/^# \(.*-backports\s\)/\1/g' /etc/apt/sources.list \
 RUN sed -i 's/^ENABLED=.*/ENABLED=1/' /etc/default/haproxy \
     && rm -rf /var/lib/apt/lists/*
 
+RUN ln -s /usr/sbin/haproxy /usr/sbin/haproxy_a
+RUN ln -s /usr/sbin/haproxy /usr/sbin/haproxy_b
 
 # consul-template
 RUN wget https://github.com/hashicorp/consul-template/releases/download/v${CONSUL_TEMPLATE_APP_VERSION}/consul-template_${CONSUL_TEMPLATE_APP_VERSION}_linux_amd64.tar.gz \
@@ -96,8 +97,9 @@ ADD haproxy.cfg        /etc/haproxy/haproxy.cfg
 # same file for an "empty template"
 ADD haproxy.cfg        /opt/consul-template/
 ADD template.conf      /opt/consul-template/
-ADD haproxy_watcher.sh /opt/consul-template/
 ADD haproxy_reload.sh  /opt/consul-template/
+ADD consul-template.sh /opt/consul-template/
+ADD consul_config.json /etc/consul.d/
 
 # use a customized rsyslog haproxy configuration
 RUN rm /etc/rsyslog.d/haproxy.conf
@@ -126,11 +128,14 @@ RUN apt-get update \
 ADD zkStart.sh /opt/zkStart.sh
 RUN rm /etc/mesos/zk
 
-RUN echo 'deb http://get.docker.io/ubuntu docker main' > /etc/apt/sources.list.d/docker.list
+#RUN echo 'deb http://get.docker.io/ubuntu docker main' > /etc/apt/sources.list.d/docker.list
 #RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D8576A8BA88D21E9
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv D8576A8BA88D21E9 && gpg --export --armor D8576A8BA88D21E9 | apt-key add -
+#RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv D8576A8BA88D21E9 && gpg --export --armor D8576A8BA88D21E9 | apt-key add -
+
+RUN echo 'deb https://apt.dockerproject.org/repo ubuntu-trusty main' > /etc/apt/sources.list.d/docker.list
+RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv F76221572C52609D && gpg --export --armor F76221572C52609D | apt-key add -
 RUN apt-get update \
-    && apt-get install -y lxc-docker-${DOCKER_APP_VERSION}
+    && apt-get install -y docker-engine=${DOCKER_APP_VERSION}
 
 # Adding docker wrapper, so CONTAINER_NAME
 # will be available for every mesos containers
@@ -161,7 +166,6 @@ RUN wget https://github.com/eBayClassifiedsGroup/registrator/releases/download/$
 # Font for logo
 RUN wget https://raw.githubusercontent.com/patorjk/figlet.js/master/fonts/Elite.flf -O /usr/share/figlet/Elite.flf
 
-ADD consul_config.json /etc/consul.d/
 ADD supervisord.conf   /etc/supervisord.conf
 ADD supervisord.sh     /opt/
 ADD panteras.http      /etc/haproxy/errors/
