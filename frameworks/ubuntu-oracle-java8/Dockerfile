@@ -1,6 +1,6 @@
-FROM ubuntu:14.04.2
+FROM ubuntu:14.04
 
-MAINTAINER <siteops@team.mobile.de>
+MAINTAINER Wojciech Sielski <wsielski@team.mobile.de>
 
 RUN apt-get update
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -21,9 +21,10 @@ RUN echo "JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /etc/environment
 RUN echo '# /lib/init/fstab: cleared out for bare-bones lxc' > /lib/init/fstab
 RUN ln -sf /proc/self/mounts /etc/mtab
 
-ADD start.sh /usr/local/bin/start.sh
+RUN cd /usr/local/bin/ && curl -O https://raw.githubusercontent.com/eBayClassifiedsGroup/PanteraS/master/frameworks/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
+ENV IMAGE panteras/ubuntu-oracle-java8
 ENV HOME  /
 WORKDIR /
 
