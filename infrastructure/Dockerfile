@@ -114,10 +114,9 @@ ADD consul-template.sh /opt/consul-template/
 ADD consul_config.json /etc/consul.d/
 
 # customize rsyslog configuration
-RUN rm /etc/rsyslog.d/haproxy.conf || true
+RUN rm /etc/rsyslog.d/haproxy.conf >/dev/null || true
 ADD rsyslog.conf /etc/rsyslog.d/20-port-514-udp.conf
 ADD rsyslog-default.conf /etc/rsyslog.d/50-default.conf
-RUN ls -al /etc/rsyslog.d
 RUN touch /var/log/rsyslog.log && chown syslog /var/log/rsyslog.log && chgrp adm /var/log/rsyslog.log
 RUN service rsyslog restart
 
