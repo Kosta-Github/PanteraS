@@ -1,5 +1,9 @@
-# PanteraS - Platform as a Service in a box
-"One container to rule them all"
+[![Build Status](https://travis-ci.org/eBayClassifiedsGroup/PanteraS.svg?branch=master)](https://travis-ci.org/eBayClassifiedsGroup/PanteraS)
+[![Docker Hub](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/panteras/paas-in-a-box/)
+[![Current Release](http://img.shields.io/badge/release-0.1.5-blue.svg)](https://github.com/eBayClassifiedsGroup/PanteraS/releases/tag/0.1.5)
+
+# PanteraS <br> _entire_ Platform as a Service, in a box
+_"One container to rule them all"_
 
 ## Goal
 The goal is to spawn a complete dockerized environment,  
@@ -8,6 +12,8 @@ fully transferable between any kind of development stage: laptop / integration /
 highly robust, highly available, fail tolerance,  
 where deployment part is fully independent from a running part.  
 Services supposed to be spawn in a second, fully scalable, easy to monitor, debug and orchestrate.
+
+_"You shall ~~not~~ PaaS"_
 
 ## Architecture
 
@@ -27,17 +33,17 @@ It is recommended to run 3 or 5 master containers to ensure high availability of
 
 ##### Only Slave mode Container
 Slave mode is enabled by `MASTER=false`  
-In this mode starts only slave components, (master part is excluded)  
+In this mode start only slave components, (master part is excluded)  
 You can run as many slaves as you wish - this is fully scalable.
 
 ![Slave Mode](http://s3.amazonaws.com/easel.ly/all_easels/19186/SlaveMode/image.jpg)
 
-##### Multiple Datacenter supporeted by Consul
+##### Multiple Datacenter supported by Consul
 To connect multiple datacenter use `consul join -wan <server 1> <server 2>`
 
 ![Consul multi DC](https://s3.amazonaws.com/easel.ly/all_easels/19186/consul/image.jpg)
 
-##### Combination of deamons startup
+##### Combination of daemons startup
 
 Depending on `MASTER` and `SLAVE` you can define role of the container
 
@@ -143,7 +149,7 @@ then you have two options:
 A. use OpenVPN client
 an example server we have created for you (in optional),
 but you need to provide certificates and config file,
-it might be little bit complex for the beginers,
+it might be little bit complex for the beginners,
 so you might to try second option first.
 
 B. SSHuttle - use https://github.com/apenwarr/sshuttle project so you can tunnel DNS traffic over ssh
@@ -153,7 +159,7 @@ but you have to have ssh daemon running in some container.
 
 there are two examples:  
 `SimpleWebappPython` - basic one - spawn 2x2containers  
-`SmoothWebappPython` - simillar to previous, but with smooth scaling down  
+`SmoothWebappPython` - similar to previous, but with smooth scaling down  
 
 HAproxy gonna ballance services between ports,  
 which has been mapped and assigned by marathon.
@@ -171,11 +177,11 @@ or asking consul DNS directly:
 $ dig @$CONSUL_IP -p8600  python.service.consul +tcp SRV
 ```
 
-remmeber to disable DNS caching in your future services.
+remember to disable DNS caching in your future services.
 
-## Put service into HAproxy HTTP loadbalancer
+## Put service into HAproxy HTTP load-balancer
 
-In order to put a service `my_service` into the `HTTP` loadbalancer (HAproxy), you need to add a `consul` tag `haproxy` 
+In order to put a service `my_service` into the `HTTP` load-balancer (`HAproxy`), you need to add a `consul` tag `haproxy` 
 (ENV `SERVICE_TAGS="haproxy"`) to the JSON deployment plan for `my_service` (see examples). `my_service` is then accessible
 on port `80` via `my_service.service.consul:80` and/or `my_service.service.<my_dc>.consul:80`.
 
@@ -184,9 +190,15 @@ service with that domain appended to the service name as well, e.g., with `HAPRO
 can access the service `my_service` via `my_service.my.own.domain.com:80` (if the IP address returned by a DNS query for
 `*.my.own.domain.com` is pointing to one of the nodes running an `HAProxy` instance).
 
-## Put service into HAproxy TCP loadbalancer
+You can also provide the additional `consul` tag `haproxy_route` with a corresponding value in order to dispatch the
+service based on the beginning of the `URL`; e.g., if you add the additional tag `haproxy_route=/minions` to the service
+definition for service `gru`, all `HTTP` requests against any of the cluster nodes on port `80` starting with `/minions/`
+will be re-routed to and load-balanced for the service `gru` (e.g., `http://cluster_node.my_company.com/minions/say/banana`).
+Note that no `URL` rewrite happens, so the service gets the full `URL` (`/minions/say/banana`) passed in.
 
-In order to put a service `my_service` into the `TCP` loadbalancer (HAproxy), you need to add a `consul` tag `haproxy_tcp` specifying
+## Put service into HAproxy TCP load-balancer
+
+In order to put a service `my_service` into the `TCP` load-balancer (`HAproxy`), you need to add a `consul` tag `haproxy_tcp` specifying
 the specific `<port>` (ENV `SERVICE_TAGS="haproxy_tcp=<port>"`) to the JSON deployment plan for `my_service`. It is also recommended
 to set the same `<port>` as the `servicePort` in the `docker` part of the JSON deployment plan. `my_service` is then accessible on
 the specific `<port>` on all cluster nodes, e.g., `my_service.service.consul:<port>` and/or `my_service.service.<my_dc>.consul:<port>`.
