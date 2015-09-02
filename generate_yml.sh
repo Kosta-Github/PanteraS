@@ -42,6 +42,9 @@ IP=${IP:-$(dig +short ${HOSTNAME})}
 MASTER=${MASTER:-"true"}
 SLAVE=${SLAVE:-"true"}
 
+# allow to inject extra hosts into the panteras docker container; e.g.: EXTRA_HOSTS="extra_hosts: hostname:1.2.3.4"
+EXTRA_HOSTS=${EXTRA_HOSTS:-""}
+
 # allow to specify a specific docker image or a specific tag of the pass-in-a-box image
 PANTERAS_IMAGE_TAG=${PANTERAS_IMAGE_TAG:-"latest"}
 PANTERAS_DOCKER_IMAGE=${PANTERAS_DOCKER_IMAGE:-${REGISTRY}panteras/paas-in-a-box:${PANTERAS_IMAGE_TAG}}
@@ -157,4 +160,4 @@ PANTERAS_HOSTNAME=${PANTERAS_HOSTNAME:-${HOSTNAME}}
 
 PANTERAS_RESTART=${PANTERAS_RESTART:-"no"}
 
-eval "$(cat docker-compose.yml.tpl| sed 's/"/+++/g'|sed  's/^\(.*\)$/echo "\1"/')" |sed 's/+++/"/g'|sed 's;\\";";g' > docker-compose.yml
+eval "$(cat docker-compose.yml.tpl | sed 's/"/+++/g' | sed 's/^\(.*\)$/echo "\1"/')" | sed 's/+++/"/g' | sed 's;\\";";g' > docker-compose.yml

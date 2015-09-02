@@ -5,6 +5,7 @@ panteras:
   net:        host
   privileged: true
   restart:    ${PANTERAS_RESTART}
+  ${EXTRA_HOSTS}
 
   environment:
     CONSUL_IP:               "${CONSUL_IP}"
